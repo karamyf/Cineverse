@@ -79,23 +79,7 @@ class FilmDetails extends React.Component {
             <Text style={styles.button_text}>Add to Watchlist</Text>
           </TouchableOpacity>
 
-          {/* display the watchlist */}
-          <View style={styles.watchlist_container}>
-            <Text style={styles.watchlist_title}>Watchlist</Text>
-            {this.state.watchlist.length > 0 ? (
-              this.state.watchlist.map((item) => (
-                <View key={item.id} style={styles.watchlist_item}>
-                  <Image
-                    style={styles.watchlist_poster}
-                    source={{ uri: `https://image.tmdb.org/t/p/w300${item.poster_path}` }}
-                  />
-                  <Text style={styles.watchlist_item_title}>{item.title}</Text>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.watchlist_empty}>Watchlist is empty</Text>
-            )}
-          </View>
+          
 
         </View>
       </ScrollView>
