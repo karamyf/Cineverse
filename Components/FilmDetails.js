@@ -8,9 +8,10 @@ class FilmDetails extends React.Component {
     super(props);
     this.state = {
       trailerKey: null,
-      watchlist: [], // new state for watchlist
+      watchlist: JSON.parse(localStorage.getItem('watchlist')) || [], // get the watchlist from local storage
     };
   }
+  
 
   componentDidMount() {
     getMovieVideosFromApi(this.props.route.params.film.id).then((data) => {
@@ -26,13 +27,22 @@ class FilmDetails extends React.Component {
   // new function to handle adding movies to the watchlist
   addToWatchlist = (film) => {
     const { watchlist } = this.state;
-    if (!watchlist.includes(film)) {
-      this.setState({ watchlist: [...watchlist, film] });
-      alert('Movie added to watchlist!');
+  
+    // check if the movie is already in the watchlist
+    const movieExists = watchlist.some((item) => item.id === film.id);
+  
+    if (!movieExists) {
+      // if the movie is not already in the watchlist, add it to the array
+      this.setState({ watchlist: [...watchlist, film] }, () => {
+        // store the updated watchlist in local storage
+        localStorage.setItem('watchlist', JSON.stringify(this.state.watchlist));
+        alert('Movie added to watchlist!');
+      });
     } else {
       alert('Movie already in watchlist!');
     }
   }
+  
 
   render() {
     const film = this.props.route.params.film;
