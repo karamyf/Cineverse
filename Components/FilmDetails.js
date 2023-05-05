@@ -1,15 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { getMovieVideosFromApi } from '../API/TMDBApi';
 import { WebView } from 'react-native-webview';
-
-
 
 class FilmDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       trailerKey: null,
+      watchlist: [], // new state for watchlist
     };
   }
 
@@ -22,6 +21,17 @@ class FilmDetails extends React.Component {
         this.setState({ trailerKey: trailer.key });
       }
     });
+  }
+
+  // new function to handle adding movies to the watchlist
+  addToWatchlist = (film) => {
+    const { watchlist } = this.state;
+    if (!watchlist.includes(film)) {
+      this.setState({ watchlist: [...watchlist, film] });
+      alert('Movie added to watchlist!');
+    } else {
+      alert('Movie already in watchlist!');
+    }
   }
 
   render() {
@@ -39,10 +49,45 @@ class FilmDetails extends React.Component {
             allowsFullscreenVideo
           />
         )}
-        <Text style={styles.title_text}>{film.title}</Text>
-        <Text style={styles.description_text}>{film.overview}</Text>
-        <Text style={styles.date_text}>Release date: {film.release_date}</Text>
-        <Text style={styles.vote_text}>Rating: {film.vote_average}</Text>
+        <View style={styles.details_container}>
+          <View style={styles.header_container}>
+            <Image style={styles.poster} source={{ uri: `https://image.tmdb.org/t/p/w300${film.poster_path}` }} />
+            <View style={styles.title_container}>
+              <Text style={styles.title_text}>{film.title}</Text>
+              <Text style={styles.date_text}>{`(${new Date(film.release_date).getFullYear()})`}</Text>
+              <Text style={styles.vote_text}>{`${film.vote_average}/10`}</Text>
+            </View>
+          </View>
+          <View style={styles.divider} />
+          <Text style={styles.section_title}>Overview</Text>
+          <Text style={styles.description_text}>{film.overview}</Text>
+
+          <TouchableOpacity
+            style={styles.button_container}
+            onPress={() => this.addToWatchlist(film)} // call the new function when the button is pressed
+          >
+            <Text style={styles.button_text}>Add to Watchlist</Text>
+          </TouchableOpacity>
+
+          {/* display the watchlist */}
+          <View style={styles.watchlist_container}>
+            <Text style={styles.watchlist_title}>Watchlist</Text>
+            {this.state.watchlist.length > 0 ? (
+              this.state.watchlist.map((item) => (
+                <View key={item.id} style={styles.watchlist_item}>
+                  <Image
+                    style={styles.watchlist_poster}
+                    source={{ uri: `https://image.tmdb.org/t/p/w300${item.poster_path}` }}
+                  />
+                  <Text style={styles.watchlist_item_title}>{item.title}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.watchlist_empty}>Watchlist is empty</Text>
+            )}
+          </View>
+
+        </View>
       </ScrollView>
     );
   }
@@ -51,30 +96,76 @@ class FilmDetails extends React.Component {
 const styles = StyleSheet.create({
   main_container: {
     flex: 1,
-    padding: 10,
+    backgroundColor: '#f0f0f0',
   },
   video: {
     height: 200,
     marginBottom: 10,
   },
+  details_container: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 10,
+    marginHorizontal: 10,
+  },
+  header_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  poster: {
+    width: 100,
+    height: 150,
+    marginRight: 20,
+    borderRadius: 5,
+  },
+  title_container: {
+    flex: 1,
+  },
   title_text: {
     fontWeight: 'bold',
     fontSize: 24,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  description_text: {
-    fontStyle: 'italic',
-    fontSize: 16,
     marginBottom: 10,
   },
   date_text: {
-    fontSize: 14,
+    fontSize: 18,
     marginBottom: 10,
+    color: '#666',
   },
   vote_text: {
-    fontSize: 14,
+    fontSize: 16,
     textAlign: 'right',
+    marginBottom: 10,
+    color: '#666',
+  },
+  divider: {
+    backgroundColor: '#ccc',
+    height: 1,
+    width: '100%',
+    marginVertical: 20,
+  },
+  section_title: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  description_text: {
+    fontSize: 16,
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  button_container: {
+    backgroundColor: '#FFC107',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 20,
+  },
+  button_text: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 18,
   },
 });
 
