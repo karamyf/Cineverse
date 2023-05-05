@@ -9,44 +9,45 @@ import { Ionicons } from '@expo/vector-icons';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-    return (
-        <NavigationContainer>
-            <Stack.Navigator 
-              initialRouteName="Search"
-              screenOptions={{
-                headerStyle: {
-                  backgroundColor: '#FFFFFF',
-                  shadowColor: '#000000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 2,
-                  elevation: 1,
-                },
-                headerTintColor: '#000000',
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                },
-                headerTitleAlign: 'center',
-                headerRight: () => (
-                  <View style={{flexDirection: 'row', marginRight: 10}}>
-                    <TouchableOpacity style={{marginRight: 10}}>
-                      <Ionicons name="notifications-outline" size={24} color="#000000" />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                      <Ionicons name="settings-outline" size={24} color="#000000" />
-                    </TouchableOpacity>
-                  </View>
-                ),
-                headerLeft: () => (
-                  <Image 
-                    style={{marginLeft: 10, width: 120, height: 30}}
-                    source={{uri: 'https://dummyimage.com/120x30/000000/fff.png&text=Logo'}} 
-                  />
-                )
-              }}>
-                <Stack.Screen name="Search" component={Search}/>
-                <Stack.Screen name="FilmDetail" component={FilmDetail}/>
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
+  return (
+    <NavigationContainer>
+      <Stack.Navigator 
+        initialRouteName="Search"
+        screenOptions={({ navigation }) => ({ // update screenOptions with ({ navigation })
+          headerStyle: {
+            backgroundColor: '#FFFFFF',
+            shadowColor: '#000000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.2,
+            shadowRadius: 2,
+            elevation: 1,
+          },
+          headerTintColor: '#000000',
+          headerTitleAlign: 'center',
+          headerRight: () => (
+            <View style={{flexDirection: 'row', marginRight: 10}}>
+              <TouchableOpacity style={{marginRight: 10}}>
+                <Ionicons name="notifications-outline" size={24} color="#000000" />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Ionicons name="settings-outline" size={24} color="#000000" />
+              </TouchableOpacity>
+            </View>
+          ),
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+              <Image 
+                style={{marginLeft: 10, width: 120, height: 30}}
+                source={require('./cineverse_logo.png')} 
+              />
+            </TouchableOpacity>
+          ),
+          headerTitle: ''// add this line to remove the text "Search"
+        })}
+      >
+        <Stack.Screen name="Search" component={Search}/>
+        <Stack.Screen name="FilmDetail" component={FilmDetail}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }

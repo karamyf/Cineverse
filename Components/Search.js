@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, View, TextInput, TouchableOpacity, FlatList } from 'react-native'
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 import FilmItem from './FilmItem'
 import { getFilmsFromApiWithSearchedText, getTrendingFilmsFromApi } from '../API/TMDBApi'
+
 
 class Search extends React.Component {
 
@@ -55,11 +56,20 @@ class Search extends React.Component {
       this.fetch_movie();
     });
   }
+  renderHeader = () => {
+    return (
+      <View style={styles.header}>
+        <Text style={styles.headline}>Trending Movies</Text>
+        <Text style={styles.subheadline}>Check out the most popular movies right now</Text>
+      </View>
+    )
+  }
 
   render() {
     const { navigation } = this.props;
     return (
       <View style={styles.main_container}>
+        {this.renderHeader()}
         <View style={styles.search_bar}>
           <TextInput
             style={styles.textinput}
@@ -142,7 +152,25 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  header: {
+    paddingTop: 40,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headline: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  subheadline: {
+    fontSize: 16,
+    color: '#777777',
+    textAlign: 'center',
+  },
 })
 
 
