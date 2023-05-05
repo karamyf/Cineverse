@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import Search from './Components/Search';
 import FilmDetail from './Components/FilmDetails';
+import WatchlistScreen from './Components/WatchlistScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Image, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,15 +26,19 @@ export default function App() {
           headerTintColor: '#000000',
           headerTitleAlign: 'center',
           headerRight: () => (
-            <View style={{flexDirection: 'row', marginRight: 10}}>
-              <TouchableOpacity style={{marginRight: 10}}>
-                <Ionicons name="notifications-outline" size={24} color="#000000" />
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <TouchableOpacity
+                style={{ marginRight: 10 }}
+                onPress={() => navigation.navigate('Watchlist')}
+              >
+                <Ionicons name="heart-outline" size={24} color="#000000" />
               </TouchableOpacity>
               <TouchableOpacity>
                 <Ionicons name="settings-outline" size={24} color="#000000" />
               </TouchableOpacity>
             </View>
           ),
+          
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Search')}>
               <Image 
@@ -42,11 +47,12 @@ export default function App() {
               />
             </TouchableOpacity>
           ),
-          headerTitle: ''// add this line to remove the text "Search"
+          headerTitle: '' //empty ^^ 
         })}
       >
         <Stack.Screen name="Search" component={Search}/>
         <Stack.Screen name="FilmDetail" component={FilmDetail}/>
+        <Stack.Screen name="Watchlist" component={WatchlistScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

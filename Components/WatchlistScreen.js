@@ -1,13 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class WatchlistScreen extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      watchlist: JSON.parse(localStorage.getItem('watchlist')) || [],
+      watchlist: [],
     };
+  }
+
+  async componentDidMount() {
+    const watchlist = await AsyncStorage.getItem('watchlist');
+    this.setState({ watchlist: JSON.parse(watchlist) || [] });
   }
 
   renderWatchlistItem = ({ item }) => (
@@ -39,6 +45,7 @@ export default class WatchlistScreen extends React.Component {
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {
