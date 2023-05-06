@@ -2,13 +2,16 @@ import React from 'react';
 import { StyleSheet, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { getMovieVideosFromApi } from '../API/TMDBApi';
 import { WebView } from 'react-native-webview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 class FilmDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       trailerKey: null,
-      watchlist: JSON.parse(localStorage.getItem('watchlist')) || [], // get the watchlist from local storage
+      watchlist: [], // initialize with empty array
     };
   }
   
@@ -18,6 +21,11 @@ class FilmDetails extends React.Component {
       const trailer = data.results.find(
         (result) => result.type === 'Trailer' && result.site === 'YouTube'
       );
+      AsyncStorage.getItem('watchlist').then((watchlist) => {
+        if (watchlist) {
+          this.setState({ watchlist: JSON.parse(watchlist) });
+        }
+      });
       if (trailer) {
         this.setState({ trailerKey: trailer.key });
       }
@@ -25,7 +33,7 @@ class FilmDetails extends React.Component {
   }
 
   // new function to handle adding movies to the watchlist
-  addToWatchlist = (film) => {
+  addToWatchlist = async (film) => {
     const { watchlist } = this.state;
   
     // check if the movie is already in the watchlist
@@ -33,15 +41,18 @@ class FilmDetails extends React.Component {
   
     if (!movieExists) {
       // if the movie is not already in the watchlist, add it to the array
-      this.setState({ watchlist: [...watchlist, film] }, () => {
-        // store the updated watchlist in local storage
-        localStorage.setItem('watchlist', JSON.stringify(this.state.watchlist));
-        alert('Movie added to watchlist!');
-      });
+      await this.setState((prevState) => ({watchlist: [...prevState.watchlist, film]}));
+      // store the updated watchlist in AsyncStorage
+      await AsyncStorage.setItem('watchlist', JSON.stringify(this.state.watchlist));
+      alert('Movie added to watchlist!');
     } else {
       alert('Movie already in watchlist!');
     }
-  }
+  };
+  
+  
+  
+  
   
 
   render() {
