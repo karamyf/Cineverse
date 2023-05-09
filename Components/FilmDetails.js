@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { getMovieVideosFromApi } from '../API/TMDBApi';
+import { getMovieVideosFromApi,getMovieCreditsFromApi} from '../API/TMDBApi';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
@@ -11,10 +12,11 @@ class FilmDetails extends React.Component {
     super(props);
     this.state = {
       trailerKey: null,
-      watchlist: [], // initialize with empty array
+      watchlist: [],
+      actors: [],
     };
   }
-  
+
 
   componentDidMount() {
     getMovieVideosFromApi(this.props.route.params.film.id).then((data) => {
@@ -30,30 +32,31 @@ class FilmDetails extends React.Component {
         this.setState({ trailerKey: trailer.key });
       }
     });
+
+    getMovieCreditsFromApi(this.props.route.params.film.id).then((data) => {
+      this.setState({ actors: data.cast });
+    });
   }
 
-  // new function to handle adding movies to the watchlist
+
   addToWatchlist = async (film) => {
     const { watchlist } = this.state;
-  
-    // check if the movie is already in the watchlist
+
     const movieExists = watchlist.some((item) => item.id === film.id);
-  
+
     if (!movieExists) {
-      // if the movie is not already in the watchlist, add it to the array
-      await this.setState((prevState) => ({watchlist: [...prevState.watchlist, film]}));
-      // store the updated watchlist in AsyncStorage
+      await this.setState((prevState) => ({ watchlist: [...prevState.watchlist, film] }));
       await AsyncStorage.setItem('watchlist', JSON.stringify(this.state.watchlist));
       alert('Movie added to watchlist!');
     } else {
       alert('Movie already in watchlist!');
     }
   };
-  
-  
-  
-  
-  
+
+
+
+
+
 
   render() {
     const film = this.props.route.params.film;
@@ -85,12 +88,39 @@ class FilmDetails extends React.Component {
 
           <TouchableOpacity
             style={styles.button_container}
-            onPress={() => this.addToWatchlist(film)} // call the new function when the button is pressed
+            onPress={() => this.addToWatchlist(film)}
           >
             <Text style={styles.button_text}>Add to Watchlist</Text>
           </TouchableOpacity>
 
-          
+
+          <View style={styles.actors_container}>
+  <Text style={styles.section_title}>Actors</Text>
+  <ScrollView horizontal={true}>
+    {this.state.actors.map((actor) => (
+      <View key={actor.id} style={styles.actor_container}>
+      {actor.profile_path ? (
+        <Image
+          style={styles.actor_image}
+          source={{
+            uri: `https://image.tmdb.org/t/p/w185${actor.profile_path}`,
+          }}
+        />
+      ) : (
+        <Image
+          style={styles.actor_image_placeholder}
+          source={{
+            uri: `https://cdn2.vectorstock.com/i/1000x1000/08/61/person-gray-photo-placeholder-little-boy-vector-23190861.jpg`,
+          }}
+        />
+      )}
+      <Text style={styles.actor_name}>{actor.name}</Text>
+    </View>
+
+    ))}
+  </ScrollView>
+</View>
+
 
         </View>
       </ScrollView>
@@ -171,6 +201,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 18,
+  },
+  actors_container: {
+    marginTop: 20,
+  },
+  actor_container: {
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  actor_image: {
+    width: 100,
+    height: 150,
+    borderRadius: 5,
+  },
+  actor_name: {
+    textAlign: 'center',
+    marginTop: 5,
   },
 });
 

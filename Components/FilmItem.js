@@ -26,7 +26,7 @@ class FilmItem extends React.Component {
               <Text style={styles.description_text} numberOfLines={6}>{film.overview}</Text>
             </View>
             <View style={styles.date_container}>
-              <Text style={styles.date_text}>Sorti le {film.release_date}</Text>
+              <Text style={styles.date_text}>Release Date: {film.release_date}</Text>
             </View>
           </View>
         </TouchableOpacity>
