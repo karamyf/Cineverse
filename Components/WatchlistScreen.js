@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList,TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class WatchlistScreen extends React.Component {
@@ -23,9 +23,19 @@ export default class WatchlistScreen extends React.Component {
         source={{ uri: `https://image.tmdb.org/t/p/w300${item.poster_path}` }}
       />
       <Text style={styles.watchlist_item_title}>{item.title}</Text>
+      <TouchableOpacity onPress={() => this.removeFromWatchlist(item.id)}>
+        <Text style={styles.delete_button}>Delete</Text>
+      </TouchableOpacity>
     </View>
   );
-
+  
+  removeFromWatchlist = async (movieId) => {
+    const { watchlist } = this.state;
+    const updatedWatchlist = watchlist.filter((movie) => movie.id !== movieId);
+    await AsyncStorage.setItem('watchlist', JSON.stringify(updatedWatchlist));
+    this.setState({ watchlist: updatedWatchlist });
+  };
+  
   render() {
     const { watchlist } = this.state;
 
@@ -48,6 +58,9 @@ export default class WatchlistScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
+
+
+  
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
