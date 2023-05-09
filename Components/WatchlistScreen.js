@@ -59,7 +59,15 @@ export default class WatchlistScreen extends React.Component {
 
 const styles = StyleSheet.create({
 
-
+  delete_button: {
+    backgroundColor: '#ffc107',
+    color: '#fff',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 100,
+    fontSize: 16,
+    marginLeft: 10
+  },
   
   container: {
     flex: 1,
